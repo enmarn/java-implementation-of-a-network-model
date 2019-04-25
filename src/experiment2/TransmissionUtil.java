@@ -1,54 +1,76 @@
 package experiment2;
 
 import experiment3.DataLinkLayer;
-import utils.BitMap;
 
 public class TransmissionUtil {
-
-	public static BitMap toTransparentBitMap(BitMap originalInfo) {
-		BitMap transparentInfo = new BitMap();
-		transparentInfo.appendByte(DataLinkLayer.START_END_FLAG);
+	/**
+	 * @param 原始信息的比特串
+	 * @return 透明传输的比特串
+	 */
+	public static String toParentTransparentBitString(String originalInfo) {
+		
 		int stat=0;
+		String transparentInfo = DataLinkLayer.START_END_FLAG;
+		
 		for(int i=0;i<originalInfo.length();i++) {
-			if(originalInfo.get(i)) {
+			
+			if(originalInfo.charAt(i)==DataLinkLayer.BIT_1) {
+				
 				stat ++;
-				transparentInfo.append(true);
+				transparentInfo += DataLinkLayer.BIT_1;
+				
 				if(stat==5) {
-					transparentInfo.append(false);
 					stat = 0;
+					transparentInfo += DataLinkLayer.BIT_0;
 				}
+				
 			} else {
-				transparentInfo.append(false);
 				stat = 0;
+				transparentInfo += DataLinkLayer.BIT_0;
 			}
 		}
-		transparentInfo.appendByte(DataLinkLayer.START_END_FLAG);
+		
+		transparentInfo += DataLinkLayer.START_END_FLAG;
 		return transparentInfo;
 	}
-	public static BitMap toOriginalBitMap(BitMap transparentInfo) {
-		BitMap originalInfo = new BitMap();
+	/**
+	 * @param 线路传输的比特串
+	 * @return 解码后的比特串
+	 */
+	public static String toOriginalBitString(String transparentInfo) {
+		
 		int stat=0;
 		int startEndFlag=0;
+		String originalInfo = "";
+		
 		for(int i=0;i<transparentInfo.length();i++) {
-			if(transparentInfo.get(i)) {
+			
+			if(transparentInfo.charAt(i)==DataLinkLayer.BIT_1) {
+				
 				stat ++;
-				originalInfo.append(true);
-				if(stat==5&&!transparentInfo.get(i+1)) {
+				originalInfo += DataLinkLayer.BIT_1;
+				
+				if(stat==5&&transparentInfo.charAt(i+1)==DataLinkLayer.BIT_0) {
 					i++;
 					stat = 0;
-				}else if(stat==5&&transparentInfo.get(i+1)&&!transparentInfo.get(i+2)){
+				}else if(stat==5
+						&&transparentInfo.charAt(i+1)==DataLinkLayer.BIT_1
+						&&transparentInfo.charAt(i+2)==DataLinkLayer.BIT_0){
 					i += 2;
-					startEndFlag ++;
-					int tmp = 6;
-					while(tmp-->0)originalInfo.clear();;
 					stat = 0;
+					startEndFlag ++;
+					originalInfo = originalInfo.substring(0, originalInfo.length()-6);
 					if(startEndFlag>=2) return originalInfo;
 				}
+				
 			} else {
-				originalInfo.append(false);
+				
+				originalInfo += DataLinkLayer.BIT_0;
 				stat = 0;
+				
 			}
 		}
+		
 		return originalInfo;
 	}
 

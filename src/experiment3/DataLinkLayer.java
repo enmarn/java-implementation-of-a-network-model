@@ -1,8 +1,13 @@
 package experiment3;
 
 public class DataLinkLayer {
-	public static byte START_END_FLAG = 0x7E;
+	public static final String START_END_FLAG = "01111110";
 	
-	public static final byte[] ACCEPT = {0x01};
-	public static final byte[] CRC_SUM_ERROR = {0x10};
+	
+	public static final char BIT_0 = '0';
+	public static final char BIT_1 = '1';
+	
+	
+	public static final String ACK = "00000001";
+	public static final String CRC_SUM_ERROR = "00000010";
 }
