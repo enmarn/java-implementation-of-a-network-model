@@ -39,7 +39,7 @@ public class SocketReceiver {
 	    			num += framenum.charAt(i) - '0';
 	    		}
 	    		String content = recv_str.substring(DataLinkLayer.SERIAL_NUMBER_LENGTH);
-				System.out.println("接收端——成功接收第 " + num + " 帧内容：" + content);
+				System.out.println("接收端——成功接收第 " + num + " 帧内容 " + content);
 			}
 		}
 	}
@@ -53,17 +53,25 @@ public class SocketReceiver {
 	    server.receive(data);
 	    //线路上传输的比特流
 	    String info = new String(data.getData());
-		System.err.println("接收者：中间信息——透明传输码 " + info);
+		System.err.println("接收者——中间信息——透明传输码 " + info);
 	    //去透明化解码
 	    info = TransmissionUtil.toOriginalBitString(info);
-		System.err.println("接收者：中间信息——去透明化码 " + info);
+		System.err.println("接收者——中间信息——去透明化码 " + info);
 	    //CRC校验
-	    String res;
-	    if(CRCUtil.check(info)) res = DataLinkLayer.ACK;
-	    else res = DataLinkLayer.CRC_SUM_ERROR;
+	    String res,detail;
+	    if(CRCUtil.check(info)) {
+	    	res = DataLinkLayer.ACK;
+	    	detail = "成功接收";
+	    }
+	    else {
+	    	res = DataLinkLayer.CRC_SUM_ERROR;
+	    	detail = "校验和错误";
+	    }
 	    //去CRC校验码
 	    info = CRCUtil.removeCRC(info);
+	    System.err.println("接收者——中间信息——去CRC码 " + info);
 	    //回复
+	    System.out.println("接收者——回复——" + detail);
 	    //CRC生成
 	    res = CRCUtil.appendCRC(res);
 	    //透明化编码
@@ -72,6 +80,7 @@ public class SocketReceiver {
 	    byte[] stat = res.getBytes();
 	    DatagramPacket response = new DatagramPacket(stat,stat.length,data.getAddress(),data.getPort());
 	    server.send(response);
+	    if(detail.equals("校验和错误")) return null;
 	    return info;
 	}
 }

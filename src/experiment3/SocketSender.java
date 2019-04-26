@@ -18,6 +18,7 @@ public class SocketSender {
 	private DatagramPacket data;
 	private DatagramSocket server; 
 	private InetAddress inetAddress;
+	private static FileReader reader;
 	
 	public SocketSender() throws Exception {
 		server = new DatagramSocket(PORT);
@@ -32,7 +33,7 @@ public class SocketSender {
 		
 		SocketSender sender = new SocketSender();
         File testfile = new File("input/test1");
-        FileReader reader = new FileReader(testfile);
+        reader = new FileReader(testfile);
         char[] fileReadBuf = new char[32];
         int frameSeq = 0;
 		//假设一次发送的内容为32位，读出字节个数
@@ -47,9 +48,9 @@ public class SocketSender {
         	String src = new String(fileReadBuf,0,readnum);
         	System.out.println("发送者——发送第 " + frameSeq + " 帧——内容:" +src);
         	src = num + src;
-        	System.err.println("发送者——帧内容： " + src);
+        	System.err.println("发送者——中间信息——帧内容  " + src);
         	//发送内容
-    	    if(!sender.send(src)) break;
+    	    if(!sender.send(src)) return;
 		}
 	    //发送终止信号
         sender.send(DataLinkLayer.FINAL_SIGN);
@@ -67,11 +68,11 @@ public class SocketSender {
 	public boolean send(String msg) throws IOException {
 		//CRC生成
 		msg = CRCUtil.appendCRC(msg);
-		System.err.println("发送者：中间信息——CRC生成码 " + msg);
+		System.err.println("发送者——中间信息——CRC生成码 " + msg);
 		//透明化处理
 	    msg = TransmissionUtil.toParentTransparentBitString(msg);
 
-		System.err.println("发送者：中间信息——透明传输码 " + msg);
+		System.err.println("发送者——中间信息——透明传输码 " + msg);
 	    byte[] transByte = msg.getBytes();
 	    DatagramPacket packet = new DatagramPacket(transByte,
 	    		transByte.length, inetAddress, 8889);
@@ -87,8 +88,11 @@ public class SocketSender {
 			String response = new String(data.getData());
 			response = TransmissionUtil.toOriginalBitString(response);
 			response = CRCUtil.removeCRC(response);
-			if(response.equals(DataLinkLayer.ACK)) return true;
-			System.out.println("发送失败——再次尝试，剩余尝试次数："+attemptNum);
+			if(response.equals(DataLinkLayer.ACK)) {
+				System.out.println("发送成功——继续发送下一帧");
+				return true;
+			}
+			System.out.println("发送失败——再次尝试，剩余尝试次数 "+attemptNum);
 			attemptNum -- ;
 		}
 		System.out.println("发送失败——停止尝试");

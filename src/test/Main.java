@@ -2,8 +2,6 @@ package test;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.jmx.gui.Client;
-import org.apache.logging.log4j.jmx.gui.ClientGui;
 
 import experiment1.CRCUtil;
 import experiment2.TransmissionUtil;
@@ -13,10 +11,10 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 //		CRCUtil crcUtil = new CRCUtil();
-		testExper1();
-//	      rootLogger.error("Logged by root logger: Hello this is an error");
-//	        rootLogger.info("Logged by root logger: Hello World!");
-//	        rootLogger.debug("Logged by root logger: Hello debug message.");
+//		testExper1();
+		rootLogger.error("Logged by root logger: Hello this is an error");
+        rootLogger.info("Logged by root logger: Hello World!");
+        rootLogger.debug("Logged by root logger: Hello debug message.");
 
 //		bitSet.clear();
 	}
