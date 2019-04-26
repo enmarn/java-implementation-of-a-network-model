@@ -49,7 +49,7 @@ public class SocketSender {
         	src = num + src;
         	System.err.println("发送者——帧内容： " + src);
         	//发送内容
-    	    sender.send(src);
+    	    if(!sender.send(src)) break;
 		}
 	    //发送终止信号
         sender.send(DataLinkLayer.FINAL_SIGN);
@@ -64,7 +64,7 @@ public class SocketSender {
 	 * @param msg
 	 * @throws IOException 
 	 */
-	public void send(String msg) throws IOException {
+	public boolean send(String msg) throws IOException {
 		//CRC生成
 		msg = CRCUtil.appendCRC(msg);
 		System.err.println("发送者：中间信息——CRC生成码 " + msg);
@@ -75,25 +75,33 @@ public class SocketSender {
 	    byte[] transByte = msg.getBytes();
 	    DatagramPacket packet = new DatagramPacket(transByte,
 	    		transByte.length, inetAddress, 8889);
-	    send(packet);
+	    return send(packet);
 	}
 
-	private void send(DatagramPacket msg) throws IOException {
+	private boolean send(DatagramPacket msg) throws IOException {
 		int attemptNum = 5;
 		while (attemptNum>0) {
 			server.send(msg);
-		    server.receive(data);
+		    receive();
 //			System.out.println(data.getAddress().getHostAddress());
 			String response = new String(data.getData());
 			response = TransmissionUtil.toOriginalBitString(response);
 			response = CRCUtil.removeCRC(response);
-			if(response.equals(DataLinkLayer.ACK)) return;
+			if(response.equals(DataLinkLayer.ACK)) return true;
 			System.out.println("发送失败——再次尝试，剩余尝试次数："+attemptNum);
 			attemptNum -- ;
 		}
-		System.out.println("发送失败——停止尝试，请检查网络");
+		System.out.println("发送失败——停止尝试");
+		return false;
 	}
-	
+	private void receive() {
+		try {
+			server.receive(data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public void close() {
 		server.close();
 	}
