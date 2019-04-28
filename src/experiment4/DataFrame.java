@@ -36,19 +36,23 @@ public class DataFrame {
 			num <<= 1;
 			num += framenum.charAt(i) - '0';
 		};
-		boolean bool = (num & 0x8000)>0;
+		boolean bool = (num & 0x00008000)>0;
 		this.frameSerial = num & FRAME_END;
+		if(this.frameSerial==16) {
+			int i=0;
+			i++;
+		}
 		Log.err.println(Integer.toBinaryString(this.frameSerial));
 		Log.err.println(Integer.toBinaryString(num));
 		content = src.substring(SERIAL_NUMBER_LENGTH);
 		if(status == SUCCEED) if(bool) status = IS_ACK;
-		Log.debug.println(toString());
+//		Log.debug.println(toString());
 	}
 	/**
 	 * @return 将Frame帧序列化后，拼接CRC并进行透明化的比特流
 	 */
 	public String toParentBitStream() {
-		Log.debug.println(toString());
+//		Log.debug.println(toString());
 		//序列化
 		String tmpSeq = Integer.toBinaryString(frameSerial);
 		String num = "";
@@ -59,6 +63,10 @@ public class DataFrame {
     	//CRC与透明化
     	src = DataLinkLayerUtil.appendCRC(src);
     	src = DataLinkLayerUtil.toParentTransparentBitStream(src);
+		if(this.frameSerial==16) {
+			int i=0;
+			i++;
+		}
 		return src;
 	}
 	/**

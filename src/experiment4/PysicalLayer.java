@@ -44,7 +44,7 @@ public class PysicalLayer implements IPysicalLayer {
 		    byte[] transByte = bitstream.getBytes();
 		    DatagramPacket packet = new DatagramPacket(transByte,
 		    		transByte.length, inetAddress, 18000-port);
-		    Log.debug.println("物理层——向物理线路发送——"+bitstream);
+		    Log.err.println("物理层——向物理线路发送——"+bitstream);
 			server.send(packet);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -57,7 +57,7 @@ public class PysicalLayer implements IPysicalLayer {
 		// TODO Auto-generated method stub
 		server.receive(data);
 		String bitstream = new String(data.getData());
-		Log.debug.println("物理层——从物理线路接收——"+bitstream);
+		Log.err.println("物理层——从物理线路接收——"+bitstream);
 		return bitstream;
 	}
 }

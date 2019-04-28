@@ -9,31 +9,17 @@ import java.io.Reader;
 
 public class Host1 {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
 		Log.who = "HOST1";
 		Log.info.println("创建");
 		BackNProtocol backNProtocol = new BackNProtocol(8999);
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					backNProtocol.receive();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
         File testfile = new File("input/test1");
         @SuppressWarnings("resource")
 		Reader reader = new FileReader(testfile);
         char[] bits = new char[1024];
-        reader.read(bits);
-		backNProtocol.send(bits);
-		
+        int i = reader.read(bits);
+		backNProtocol.send(new String(bits, 0, i));
 	}
 
 }

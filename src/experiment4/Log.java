@@ -1,6 +1,7 @@
 package experiment4;
 
 import java.io.PrintStream;
+import java.sql.Date;
 
 public class Log {
 	public static String who = "";
@@ -18,9 +19,9 @@ class LogUtil{
 		this.stream = stream;
 	}
 	public synchronized void println(String msg){
-		if(show) stream.println(head + Log.who + "	 " + msg);
+		if(show) stream.println(head + Log.who + " " +(System.currentTimeMillis())+"	 " + msg);
 	}
 	public synchronized void println(String who, String msg){
-		if(show) stream.println(head + who + "	 " + msg);
+		if(show) stream.println(head + who + " " +(System.currentTimeMillis()) + "	 " + msg);
 	}
 }
