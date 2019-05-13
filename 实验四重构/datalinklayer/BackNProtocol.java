@@ -12,7 +12,8 @@ class BackNProtocol{
 	public int ackExpected = 0;
 	@SuppressWarnings("unused")
 	private static final int ATTEMPT_NUM = 5;
-	private static final int WINDOW_SIZE = 7;
+	private static int MAX_WINDOW_SIZE = 7;
+	private static int WINDOW_SIZE = 1;
 	private int timeout = 2000;
 	private boolean alive = true;
 	private IPhysicLayer physicLayer;
@@ -43,7 +44,7 @@ class BackNProtocol{
 								cache.isSendding.add(buf);
 								cache.theNextACK = null;
 							}
-							else if(cache.nextSend.size()!=0) {
+							else if(cache.nextSend.size()!=0&cache.isSendding.size()<WINDOW_SIZE) {
 								//无ACK等待，将待发送队列首发送
 								buffer buf = cache.nextSend.poll();
 //								System.out.println("ackexpected "+ackExpected+" 发送一个数据帧"+buf.index);
@@ -131,6 +132,12 @@ class BackNProtocol{
 								Log.BNP_0.println("收到一个ACK——————ACK " + frame.frameSerial);
 								Log.BNP_0.println("ACK_EXCEPTED " + (frame.frameSerial + 1));
 								Log.BNP_0.printSepln();
+								/*
+								 * 如果收到第0帧ACK，则放大窗口
+								 * 如果收到结束帧ACK，则缩小窗口
+								 */
+								if(frame.frameSerial==0) WINDOW_SIZE = MAX_WINDOW_SIZE;
+								else if((frame.control&DataFrame.FRAME_END)>0) WINDOW_SIZE = 1;
 								synchronized (cache) {
 									while (!cache.isSendding.isEmpty()&&cache.isSendding.peek().index<=frame.frameSerial) {
 										cache.isSendding.poll();
