@@ -7,7 +7,7 @@ import physiclayer.MockPhysicLayer;
 class BackNProtocol{
 	CacheArea cache;
 	//出错概率n%
-	private int errp = 5;
+	private int errp = 0;
 	public int frameExpected = DataFrame.INIT;
 	public int ackExpected = 0;
 	@SuppressWarnings("unused")
@@ -190,6 +190,7 @@ class BackNProtocol{
 							if(frame.content.length()%8!=0) 
 								throw new Exception("帧内容长度不为8的整数倍！");
 							buf.length = frame.content.length()/8;
+							buf.index = frame.frameSerial;
 							buf.content = BitStream.getBytesByBitString(frame.content);
 							cache.recvbuf.length+=buf.length;
 							cache.received.add(buf);

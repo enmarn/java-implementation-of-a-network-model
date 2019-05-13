@@ -19,7 +19,7 @@ class CacheArea {
 			 
 	        @Override
 	        public int compare(buffer c1, buffer c2) {
-	            return (int) -(c1.index - c2.index);
+	            return (int) (c1.index - c2.index);
 	        }
 		});
 		recvbuf =new buffer();

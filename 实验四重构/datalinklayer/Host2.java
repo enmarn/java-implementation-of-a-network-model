@@ -11,9 +11,10 @@ public class Host2 {
 		// TODO Auto-generated method stub
 		Log.who = "HOST2";
 		DataLinkLayer layer = new DataLinkLayer(8999);
-		InputStream in = new FileInputStream("input/test1");
+//		InputStream in = new FileInputStream("input/test1");
+		InputStream in = new FileInputStream("input/why.jpg");		
 		layer.send(in);
-		byte[]bytes=layer.receive();
-		Log.info.println("这是收到的信息\n"+BitStream.getBitStringByBytes(bytes));
+//		byte[]bytes=layer.receive();
+//		Log.info.println("这是收到的信息\n"+BitStream.getBitStringByBytes(bytes));
 	}
 }
