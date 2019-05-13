@@ -2,7 +2,7 @@ package experiment4;
 
 import java.io.PrintStream;
 
-public class Log {
+public class Log1 {
 	public static String who = "";
 	public static LogUtil err   = new LogUtil("[error] ",false, System.err);
 	public static LogUtil BNP_0 = new LogUtil("[BNP__] ",false, System.err);
@@ -19,7 +19,7 @@ class LogUtil{
 		this.stream = stream;
 	}
 	public synchronized void println(String msg){
-		if(show) stream.println(head + Log.who + " " +(System.currentTimeMillis())+"	 " + msg);
+		if(show) stream.println(head + Log1.who + " " +(System.currentTimeMillis())+"	 " + msg);
 	}
 	public synchronized void println(String who, String msg){
 		if(show) stream.println(head + who + " " +(System.currentTimeMillis()) + "	 " + msg);

@@ -9,8 +9,8 @@ public class Host1 {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-		Log.who = "HOST1";
-		Log.info.println("创建");
+		Log1.who = "HOST1";
+		Log1.info.println("创建");
 		BackNProtocol backNProtocol = new BackNProtocol(8999);
         File testfile = new File("input/test1");
         @SuppressWarnings("resource")

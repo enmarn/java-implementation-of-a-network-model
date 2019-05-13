@@ -1,5 +1,7 @@
 package experiment4;
 
+import java.util.Random;
+
 import experiment3.DataLinkLayer;
 
 public class DataFrame {
@@ -22,15 +24,22 @@ public class DataFrame {
 	public DataFrame(String parentbitStream) {
 		// TODO Auto-generated constructor stub
 		//去透明化与CRC
-		Log.err.println("原串"+parentbitStream);
+		Log1.err.println("原串"+parentbitStream);
 		String src = DataLinkLayerUtil.toOriginalBitStream(parentbitStream);
-		Log.err.println("去透明化串"+src);
+		Log1.err.println("去透明化串"+src);
 		status = DataLinkLayerUtil.checkCRC(src)?1:0;
 		src = DataLinkLayerUtil.removeCRC(src);
-		Log.err.println("去CRC串"+src);
+		Log1.err.println("去CRC串"+src);
+//		/**
+//		 * 随机出错
+//		 */
+//		int r = (int) (Math.random()%2);
+//		int t = parentbitStream.length()/2;
+//		String str = "";
+//		if(r == 0) parentbitStream = parentbitStream.substring(0, t) + "10" + parentbitStream.substring(t+1);
 		//反序列化
 		String framenum = src.substring(0, SERIAL_NUMBER_LENGTH);
-		Log.err.println("framenum"+framenum);
+		Log1.err.println("framenum"+framenum);
 		int num = 0;
 		for(int i=0;i<framenum.length();i++) {
 			num <<= 1;
@@ -38,12 +47,9 @@ public class DataFrame {
 		};
 		boolean bool = (num & 0x00008000)>0;
 		this.frameSerial = num & FRAME_END;
-		if(this.frameSerial==16) {
-			int i=0;
-			i++;
-		}
-		Log.err.println(Integer.toBinaryString(this.frameSerial));
-		Log.err.println(Integer.toBinaryString(num));
+
+		Log1.err.println(Integer.toBinaryString(this.frameSerial));
+		Log1.err.println(Integer.toBinaryString(num));
 		content = src.substring(SERIAL_NUMBER_LENGTH);
 		if(status == SUCCEED) if(bool) status = IS_ACK;
 //		Log.debug.println(toString());

@@ -8,8 +8,8 @@ public class Host2 {
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		Log.who = "HOST2";
-		Log.info.println("创建");
+		Log1.who = "HOST2";
+		Log1.info.println("创建");
 		BackNProtocol backNProtocol = new BackNProtocol(9001);
         File testfile = new File("input/test1");
         @SuppressWarnings("resource")
@@ -17,7 +17,7 @@ public class Host2 {
         char[] bits = new char[1024];
         int i = reader.read(bits);
 		backNProtocol.send(new String(bits, 0, i));
-//		backNProtocol.close();
+		backNProtocol.close();
 	}
 
 }

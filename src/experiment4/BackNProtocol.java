@@ -86,7 +86,7 @@ public class BackNProtocol implements ILinkLayer{
 	@Override
 	public boolean send(String bitStream) throws InterruptedException {
 		// TODO Auto-generated method stub
-		Log.info.println("发送信息——" + bitStream);
+		Log1.info.println("发送信息——" + bitStream);
 		try {
 			InputStream is =new ByteArrayInputStream(bitStream.getBytes());
 			Reader reader = new InputStreamReader(is);
@@ -115,7 +115,7 @@ public class BackNProtocol implements ILinkLayer{
 	public boolean send(char[]bits) throws InterruptedException {
 		// TODO Auto-generated method stub
 		String bitstream = new String(bits);
-		Log.info.println("发送信息——" +  bitstream);
+		Log1.info.println("发送信息——" +  bitstream);
 		try {
 			InputStream is =new ByteArrayInputStream(bitstream.getBytes());
 			Reader reader = new InputStreamReader(is);
@@ -159,15 +159,15 @@ public class BackNProtocol implements ILinkLayer{
 			if(frame.status==DataFrame.IS_ACK) {
 				//接收到ACK信息,发送下一帧
 				queue.pop();
-				synchronized (Log.frame) {
-					Log.frame.printSepln("recieve a ACK");
-					Log.frame.println("type: "+ frame.status);
-					Log.frame.println("CRC校验：" + (frame.status>0));
-					Log.frame.println("接收帧序号："+frame.frameSerial);
-					Log.frame.println("返回ACK值："+frame.frameSerial);
-					Log.frame.printSepln();
+				synchronized (Log1.frame) {
+					Log1.frame.printSepln("recieve a ACK");
+					Log1.frame.println("type: "+ frame.status);
+					Log1.frame.println("CRC校验：" + (frame.status>0));
+					Log1.frame.println("接收帧序号："+frame.frameSerial);
+					Log1.frame.println("返回ACK值："+frame.frameSerial);
+					Log1.frame.printSepln();
 				}
-				Log.BNP_0.println("收到ACK"+frame.getFrameSerial());
+				Log1.BNP_0.println("收到ACK"+frame.getFrameSerial());
 				if(flag) break;
 			} else if (frame.status==DataFrame.NORMAL) {
 				//接收对方传来的普通帧
@@ -176,43 +176,43 @@ public class BackNProtocol implements ILinkLayer{
 					if(frame_expected!=0) 
 						content += frame.content;
 					DataFrame ack_frame = new DataFrame(frame_expected, "");
-					Log.BNP_0.println("收到预期帧——返回ACK"+frame_expected);
-					synchronized (Log.frame) {
-						Log.frame.printSepln("recieve a frame");
-						Log.frame.println("type: "+ frame.status);
-						Log.frame.println("CRC校验：" + (frame.status>0));
-						Log.frame.println("接收帧序号："+frame.frameSerial);
-						Log.frame.println("预期帧序号："+frame_expected);
-						Log.frame.println("返回ACK值："+frame.frameSerial);
-						Log.frame.printSepln();
+					Log1.BNP_0.println("收到预期帧——返回ACK"+frame_expected);
+					synchronized (Log1.frame) {
+						Log1.frame.printSepln("recieve a frame");
+						Log1.frame.println("type: "+ frame.status);
+						Log1.frame.println("CRC校验：" + (frame.status>0));
+						Log1.frame.println("接收帧序号："+frame.frameSerial);
+						Log1.frame.println("预期帧序号："+frame_expected);
+						Log1.frame.println("返回ACK值："+frame.frameSerial);
+						Log1.frame.printSepln();
 					}
 					connect.send(ack_frame.toParentBitStream(true));//是ACK
 					frame_expected ++;
 				} else if(frame.frameSerial==DataFrame.FRAME_END) {
 					//收到结束帧，停止接收
 					DataFrame ack_frame = new DataFrame(frame.frameSerial, "");
-					Log.BNP_0.println("收到结束帧——返回ACK"+frame.getContent());
-					synchronized (Log.frame) {
-						Log.frame.printSepln("recieve end tag");
-						Log.frame.println("type: "+ frame.status);
-						Log.frame.println("CRC校验：" + (frame.status>0));
-						Log.frame.println("接收帧序号："+frame.frameSerial);
-						Log.frame.println("预期帧序号："+frame_expected);
-						Log.frame.println("返回ACK值："+frame.frameSerial);
-						Log.frame.printSepln();
+					Log1.BNP_0.println("收到结束帧——返回ACK"+frame.getContent());
+					synchronized (Log1.frame) {
+						Log1.frame.printSepln("recieve end tag");
+						Log1.frame.println("type: "+ frame.status);
+						Log1.frame.println("CRC校验：" + (frame.status>0));
+						Log1.frame.println("接收帧序号："+frame.frameSerial);
+						Log1.frame.println("预期帧序号："+frame_expected);
+						Log1.frame.println("返回ACK值："+frame.frameSerial);
+						Log1.frame.printSepln();
 					}
 					connect.send(ack_frame.toParentBitStream(true));//是ACK
-					Log.info.println("收到信息——"+ content);
+					Log1.info.println("收到信息——"+ content);
 				} 
 			} //传输错误的帧，丢弃
 			else {
-				synchronized (Log.frame) {
-					Log.frame.printSepln("recieve fault");
-					Log.frame.println("type: "+ frame.status);
-					Log.frame.println("CRC校验：" + (frame.status>0));
-					Log.frame.println("接收帧序号："+frame.frameSerial);
-					Log.frame.println("预期帧序号："+frame_expected);
-					Log.frame.printSepln();
+				synchronized (Log1.frame) {
+					Log1.frame.printSepln("recieve fault");
+					Log1.frame.println("type: "+ frame.status);
+					Log1.frame.println("CRC校验：" + (frame.status>0));
+					Log1.frame.println("接收帧序号："+frame.frameSerial);
+					Log1.frame.println("预期帧序号："+frame_expected);
+					Log1.frame.printSepln();
 				}
 			}
 		}
@@ -265,13 +265,13 @@ public class BackNProtocol implements ILinkLayer{
 			if(send_next==size()) return false;
 				StrSyn syn = get(size()-1-send_next);
 				send_next ++;
-				Log.BNP_0.println("BNP协议——发送第 " + syn.framenum +"帧");
-				synchronized (Log.frame) {
-					Log.frame.printSepln("send a frame");
-					Log.frame.println("正在发送帧序号："+syn.framenum);
-					Log.frame.println("下一发送帧序号："+send_next);
-					Log.frame.println("预期收到的ACK："+syn.framenum);
-					Log.frame.printSepln();
+				Log1.BNP_0.println("BNP协议——发送第 " + syn.framenum +"帧");
+				synchronized (Log1.frame) {
+					Log1.frame.printSepln("send a frame");
+					Log1.frame.println("正在发送帧序号："+syn.framenum);
+					Log1.frame.println("下一发送帧序号："+send_next);
+					Log1.frame.println("预期收到的ACK："+syn.framenum);
+					Log1.frame.printSepln();
 				}
 				syn.time = System.currentTimeMillis();
 				syn.last_attempt_num --;
